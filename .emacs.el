@@ -1,6 +1,6 @@
 ;;; .emacs --- by Daniel Sjöblom - placed in the public domain
 
-;; Time-stamp: <2023-03-12 16:22:03 daniel>
+;; Time-stamp: <2023-03-12 17:11:54 daniel>
 
 ;;; Commentary:
 
@@ -194,7 +194,10 @@
 
 ; define as function, because current-project does not auto-refresh, makes the title refreshable elsewhere
 (defun refresh-frame-title()
-  (setq frame-title-format (list (if (boundp 'current-project) (concat current-project " "))
+  (setq frame-title-format (list (if (boundp 'current-project)
+                                     (concat current-project " ")
+                                   (if (boundp 'ap-current-project)
+                                       (concat ap-current-project " ")))
                                  "| "
                                  user-login-name
                                  "@"
@@ -341,7 +344,7 @@
   (deactivate-mark nil))
 (define-key global-map [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
 
-;; Something breaks backward delete char in some mode, define a new function...
+;; Something breaks backward delete char in some modes, define a new function...
 (defun my-electric-backspace (arg)
   (interactive "*P")
   (let ((here (point)))
@@ -436,7 +439,7 @@
   (global-flycheck-mode))
 
 ;; Quick finding of project files
-;; Note: Railsy is set up in a local file, not part of the main .emacs
+;; Note: Railsy/Anyproj is set up in a local file, not part of the main .emacs
 (when (require 'find-file-in-project nil t)
   (setq-default ffip-limit 2048) ; limit on files to open, default is 512
   (global-set-key (kbd "C-x p") 'find-file-in-project))
@@ -526,6 +529,8 @@
 
 ;; ruby-tools, some small utilites for ruby-mode
 (require 'ruby-tools nil t)
+
+(setq-default js-indent-level 2)
 
 ;; use web-mode for .erb files
 (when (require 'web-mode nil t)
