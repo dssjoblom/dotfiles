@@ -1,11 +1,11 @@
 ;;; .emacs --- by Daniel Sjöblom - placed in the public domain
 
-;; Time-stamp: <2022-06-16 16:30:31 daniel>
+;; Time-stamp: <2023-03-12 16:22:03 daniel>
 
 ;;; Commentary:
 
 ;; This .emacs requires a fairly recent Emacs, tested on Ubuntu
-;; version 25.1 to 28.1.
+;; version 25.1 to 28.2.
 
 ;;; Code:
 
@@ -60,6 +60,9 @@
 (use-package yaml-mode :ensure t)
 (use-package rainbow-delimiters :ensure t)
 (use-package dumb-jump :ensure t)
+(use-package systemd :ensure t)
+(use-package slime :ensure t)
+(use-package cider :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; (Hopefully) portable stuff ;;;
@@ -93,12 +96,20 @@
        (mode . java-mode))
       ("Javascript"
        (mode . js-mode))
+      ("Clojure"
+       (mode . clojure-mode))
       ("Web"
        (mode . web-mode))
       ("Yaml"
        (mode . yaml-mode))
       ("SCSS"
        (mode . scss-mode))
+      ("Systemd"
+       (mode . systemd-mode))
+      ("Markdown"
+       (mode . markdown-mode))
+      ("Dockerfile"
+       (mode . dockerfile-mode))
       ("C"
        (mode . c-mode))
       ("C++"
@@ -133,7 +144,7 @@
        (mode . ruby-mode)))))
  '(ibuffer-show-empty-filter-groups nil)
  '(package-selected-packages
-   '(dumb-jump solaire-mode rainbow-delimiters ya-folding use-package impatient-mode markdown-mode fold-this yafolding dockerfile-mode slim-mode vue-mode forth-mode rvm smex rjsx-mode yaml-mode smartparens company robe idle-highlight-in-visible-buffers-mode coffee-mode flycheck uniquify-files web-mode find-file-in-project))
+   '(cider slime systemd dumb-jump solaire-mode rainbow-delimiters ya-folding use-package impatient-mode markdown-mode fold-this yafolding dockerfile-mode slim-mode vue-mode forth-mode rvm smex rjsx-mode yaml-mode smartparens company robe idle-highlight-in-visible-buffers-mode coffee-mode flycheck uniquify-files web-mode find-file-in-project))
  '(safe-local-variable-values
    '((eval font-lock-add-keywords nil
            `((,(concat "("
@@ -161,10 +172,11 @@
  '(font-lock-type-face ((t (:foreground "SteelBlue4"))))
  '(font-lock-variable-name-face ((t (:foreground "orange red"))))
  '(font-lock-warning-face ((t (:foreground "red" :weight bold))))
- '(fringe ((t (:background "wheat"))))
+ '(fringe ((t (:background "light gray"))))
  '(match ((((class color) (min-colors 88) (background light)) (:background "lemonchiffon"))))
  '(menu ((((type x-toolkit)) (:background "wheat" :foreground "black"))))
  '(mmm-default-submode-face ((t (:background "gray97"))))
+ '(mode-line ((t (:box (:line-width (1 . -1) :style released-button) :foreground "black" :background "light gray"))))
  '(outline-7 ((t (:inherit font-lock-string-face))))
  '(region ((t (:background "khaki2"))))
  '(scroll-bar ((t (:background "wheat" :foreground "black"))))
@@ -329,7 +341,7 @@
   (deactivate-mark nil))
 (define-key global-map [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
 
-;; Something breaks backward delete char in ruby and web mode, define a new function...
+;; Something breaks backward delete char in some mode, define a new function...
 (defun my-electric-backspace (arg)
   (interactive "*P")
   (let ((here (point)))
@@ -520,7 +532,9 @@
   (add-to-list 'auto-mode-alist '("\\.erb$" . web-mode))
   (add-hook 'web-mode-hook 'default-coding-hook))
 
-(add-hook 'web-mode-hook #'(lambda() (define-key web-mode-map [backspace] 'my-electric-backspace)))
+(add-hook 'web-mode-hook
+          #'(lambda()
+              (define-key web-mode-map [backspace] 'my-electric-backspace)))
 
 (when (require 'vue-mode nil t)
   (add-to-list 'auto-mode-alist '("\\.vue$" . vue-mode)))
@@ -557,7 +571,9 @@
 ;; Map extra key for tags, robe uses M-.
 (global-set-key (kbd "C-c .") #'xref-find-definitions)
 
-(add-hook 'ruby-mode-hook #'(lambda() (define-key ruby-mode-map [backspace] 'my-electric-backspace)))
+(add-hook 'ruby-mode-hook
+          #'(lambda()
+              (define-key ruby-mode-map [backspace] 'my-electric-backspace)))
 
 ;; CSS-mode hooks
 
@@ -578,6 +594,10 @@
 
 (add-hook 'sh-mode-hook 'default-coding-hook)
 
+;; Systemd mode
+(add-to-list 'auto-mode-alist '("\\.service$" . systemd-mode))
+(add-to-list 'auto-mode-alist '("\\.service.j2$" . systemd-mode))
+
 ;; Coffee mode
 (when (require 'coffee-mode nil t)
   (setq-default coffee-tab-width 2)
@@ -587,6 +607,7 @@
 
 (defun lisp-mode-hook-common ()
   (default-coding-hook)
+  (local-set-key (kbd "<backspace>") #'backward-delete-char-untabify)
   ;; Turn on outline minor mode, a sort of folding mode
   (outline-minor-mode 1))
 
@@ -596,11 +617,15 @@
           #'lisp-mode-hook-common)
 (add-hook 'scheme-mode-hook
           #'lisp-mode-hook-common)
+(add-hook 'clojure-mode-hook
+          #'lisp-mode-hook-common)
 
 ;; Add macros to elisp mode indent
 (and (fboundp 'lisp-indent-function)
      (fboundp 'with-buffers-matching)
      (put 'with-buffers-matching 'lisp-indent-function 1))
+
+(setq inferior-lisp-program "/usr/bin/sbcl")
 
 ;; Compilation mode hook
 ;; Since the lines with compiler flags are not very interesting
@@ -623,10 +648,6 @@
   (autoload 'groovy-mode "groovy-mode" "Groovy editing mode." t)
   (add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
   (add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode)))
-
-;; google-this mode (https://raw.githubusercontent.com/Bruce-Connor/emacs-google-this)
-(when (require 'google-this nil t)
-  (google-this-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Last things to do before emacs is up and running ;;;
