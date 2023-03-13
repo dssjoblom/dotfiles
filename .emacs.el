@@ -1,6 +1,6 @@
 ;;; .emacs --- by Daniel Sjöblom - placed in the public domain
 
-;; Time-stamp: <2023-03-12 17:11:54 daniel>
+;; Time-stamp: <2023-03-12 17:14:17 daniel>
 
 ;;; Commentary:
 
@@ -37,7 +37,6 @@
         use-package-expand-minimally t))
 
 ;; Install packages we use
-(use-package coffee-mode :ensure t)
 (use-package company :ensure t)
 (use-package dockerfile-mode :ensure t)
 (use-package dockerfile-mode :ensure t)
@@ -144,7 +143,7 @@
        (mode . ruby-mode)))))
  '(ibuffer-show-empty-filter-groups nil)
  '(package-selected-packages
-   '(cider slime systemd dumb-jump solaire-mode rainbow-delimiters ya-folding use-package impatient-mode markdown-mode fold-this yafolding dockerfile-mode slim-mode vue-mode forth-mode rvm smex rjsx-mode yaml-mode smartparens company robe idle-highlight-in-visible-buffers-mode coffee-mode flycheck uniquify-files web-mode find-file-in-project))
+   '(cider slime systemd dumb-jump solaire-mode rainbow-delimiters ya-folding use-package impatient-mode markdown-mode fold-this yafolding dockerfile-mode slim-mode vue-mode forth-mode rvm smex rjsx-mode yaml-mode smartparens company robe idle-highlight-in-visible-buffers-mode flycheck uniquify-files web-mode find-file-in-project))
  '(safe-local-variable-values
    '((eval font-lock-add-keywords nil
            `((,(concat "("
@@ -194,7 +193,7 @@
 
 ; define as function, because current-project does not auto-refresh, makes the title refreshable elsewhere
 (defun refresh-frame-title()
-  (setq frame-title-format (list (if (boundp 'current-project)
+  (setq frame-title-format (list (if (and (boundp 'current-project) (> (length current-project) 0))
                                      (concat current-project " ")
                                    (if (boundp 'ap-current-project)
                                        (concat ap-current-project " ")))
