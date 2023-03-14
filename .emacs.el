@@ -1,6 +1,6 @@
 ;;; .emacs --- by Daniel Sjöblom - placed in the public domain
 
-;; Time-stamp: <2023-03-12 17:14:17 daniel>
+;; Time-stamp: <2023-03-14 08:27:10 daniel>
 
 ;;; Commentary:
 
@@ -62,6 +62,7 @@
 (use-package systemd :ensure t)
 (use-package slime :ensure t)
 (use-package cider :ensure t)
+(use-package uniquify-files :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; (Hopefully) portable stuff ;;;
@@ -143,7 +144,7 @@
        (mode . ruby-mode)))))
  '(ibuffer-show-empty-filter-groups nil)
  '(package-selected-packages
-   '(cider slime systemd dumb-jump solaire-mode rainbow-delimiters ya-folding use-package impatient-mode markdown-mode fold-this yafolding dockerfile-mode slim-mode vue-mode forth-mode rvm smex rjsx-mode yaml-mode smartparens company robe idle-highlight-in-visible-buffers-mode flycheck uniquify-files web-mode find-file-in-project))
+   '(uniquify-files yaml-mode yafolding web-mode vue-mode use-package systemd solaire-mode smex smartparens slime slim-mode rvm robe rjsx-mode rainbow-delimiters markdown-mode magit ivy impatient-mode idle-highlight-in-visible-buffers-mode forth-mode fold-this flycheck find-file-in-project dumb-jump dockerfile-mode company coffee-mode cider))
  '(safe-local-variable-values
    '((eval font-lock-add-keywords nil
            `((,(concat "("
