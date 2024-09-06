@@ -1,11 +1,11 @@
 ;;; .emacs --- by Daniel Sjöblom - placed in the public domain
 
-;; Time-stamp: <2023-03-14 08:27:10 daniel>
+;; Time-stamp: <2024-09-06 20:02:10 daniel>
 
 ;;; Commentary:
 
-;; This .emacs requires a fairly recent Emacs, tested on Ubuntu
-;; version 25.1 to 28.2.
+;; This .emacs requires a fairly recent Emacs, tested on Ubuntu,
+;; versions 25.1 to 29.1.
 
 ;;; Code:
 
@@ -63,6 +63,8 @@
 (use-package slime :ensure t)
 (use-package cider :ensure t)
 (use-package uniquify-files :ensure t)
+(use-package ido-completing-read+ :ensure t)
+(use-package ido-vertical-mode :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; (Hopefully) portable stuff ;;;
@@ -144,7 +146,7 @@
        (mode . ruby-mode)))))
  '(ibuffer-show-empty-filter-groups nil)
  '(package-selected-packages
-   '(uniquify-files yaml-mode yafolding web-mode vue-mode use-package systemd solaire-mode smex smartparens slime slim-mode rvm robe rjsx-mode rainbow-delimiters markdown-mode magit ivy impatient-mode idle-highlight-in-visible-buffers-mode forth-mode fold-this flycheck find-file-in-project dumb-jump dockerfile-mode company coffee-mode cider))
+   '(graphviz-dot-mode ido-vertical-mode ido-completing-read+ uniquify-files yaml-mode yafolding web-mode vue-mode use-package systemd solaire-mode smex smartparens slime slim-mode rvm robe rjsx-mode rainbow-delimiters markdown-mode magit ivy impatient-mode idle-highlight-in-visible-buffers-mode forth-mode fold-this flycheck find-file-in-project dumb-jump dockerfile-mode company coffee-mode cider))
  '(safe-local-variable-values
    '((eval font-lock-add-keywords nil
            `((,(concat "("
@@ -160,7 +162,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "gray97" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 113 :width normal :foundry "misc" :family "fixed"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "gray97" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 110 :width normal :foundry "DAMA" :family "Ubuntu Mono"))))
  '(cursor ((t (:background "black"))))
  '(font-lock-builtin-face ((t (:foreground "dark green"))))
  '(font-lock-comment-face ((t (:foreground "grey35"))))
@@ -206,7 +208,7 @@
 
 (refresh-frame-title)
 
-;; Global font lock mode turn on ;-)
+;; Global font lock mode
 (global-font-lock-mode 1)
 
 ;; No splash screen or startup message
@@ -369,14 +371,21 @@
 ;;;;;;;;;;;;;;;;;;;
 
 ;; This turns on ido mode, which provides a more convenient way to
-;; select buffers and find files.  It replaces default keybindings
+;; select buffers and find files. It replaces default keybindings
 ;; with similar but more powerful functions. Need the ido package.
 
 (when (require 'ido nil t)
   (ido-mode t)
   (ido-everywhere t)
-  (when (require 'ido-ubiquitous nil t) ;; Similar functionality in other contexts
+  (when (require 'ido-vertical-mode nil t)
+    (ido-vertical-mode 1))
+  (when (require 'ido-completing-read+ nil t) ;; Similar functionality in other contexts
     (ido-ubiquitous-mode 1))
+  (defun bind-ido-keys ()
+    "Keybindings for ido mode."
+    (define-key ido-completion-map (kbd "<down>") 'ido-next-match)
+    (define-key ido-completion-map (kbd "<up>") 'ido-prev-match))
+  (add-hook 'ido-setup-hook #'bind-ido-keys)
   (when (require 'smex nil t) ;; IDO for M-x
     (smex-initialize)
     (global-set-key "\M-x" #'smex)))
@@ -499,6 +508,11 @@
 ;; Ruby mode hooks
 
 (add-hook 'ruby-mode-hook 'default-coding-hook)
+
+;; Use default Ruby checker for Flycheck
+(add-hook 'ruby-mode-hook
+          #'(lambda ()
+              (setq flycheck-checker :ruby)))
 
 ;; Robe if available
 (when (and (require 'robe nil t)
