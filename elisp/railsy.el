@@ -40,6 +40,7 @@
                                  ".slim"
                                  ".prawn"
                                  ".builder"
+                                 ".jbuilder"
                                  ".css"
                                  ".scss"
                                  ".sass"

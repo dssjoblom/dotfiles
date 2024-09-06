@@ -37,8 +37,6 @@
     (setq-default ffip-prune-patterns (append prune-files ffip-prune-patterns)) ; Also ignore some Rails dirs
     (setq-default ffip-patterns (append (mapcar #'(lambda (f) (concat "*" f)) file-types) ffip-patterns))
     (ivy-mode t)
-    (when (fboundp #'refresh-frame-title)
-      (refresh-frame-title)) ; put project name in frame title
     (with-buffers-matching
           (buff
            #'(lambda (buff)
