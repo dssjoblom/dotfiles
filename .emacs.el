@@ -1,6 +1,6 @@
 ;;; .emacs --- by Daniel Sjöblom - placed in the public domain
 
-;; Time-stamp: <2024-09-06 21:34:43 daniel>
+;; Time-stamp: <2024-09-06 21:48:14 daniel>
 
 ;;; Commentary:
 
@@ -195,19 +195,15 @@
 
 ;; Show user@host + file in frame title
 
-; define as function, because current-project does not auto-refresh, makes the title refreshable elsewhere
+; for changing title when using anyproj
 (defun refresh-frame-title()
-  (setq frame-title-format (list (if (and (boundp 'current-project) (> (length current-project) 0))
-                                     (concat current-project " ")
-                                   (if (boundp 'ap-current-project)
-                                       (concat ap-current-project " ")))
+  (setq frame-title-format (list (if (and (boundp 'ap-current-project) (> (length ap-current-project) 0))
+                                     (concat ap-current-project " "))
                                  "| "
                                  user-login-name
                                  "@"
                                  (system-name)
                                  " || %f" )))
-
-(refresh-frame-title)
 
 ;; Global font lock mode
 (global-font-lock-mode 1)

@@ -53,6 +53,11 @@
                   "*/.cache/*"
                   "*/node_modules/*"))))
 
+(defcustom ap-init-hook nil
+  "Hook run after switching to a project"
+  :type 'hook
+  :group 'ap)
+
 (defun ap-switch-project(p)
   (interactive (list (completing-read "Choose project: " (mapcar 'car ap-projects))))
   (let* ((project-dir  (caddr (assoc p ap-projects)))
@@ -75,7 +80,9 @@
                      (dir (dsj-buf-dir buff)))
                  (and (not (string-prefix-p project-dir dir))
                       (member ext (mapcar #'(lambda (s) (substring s 1)) file-types))))))
-        (kill-buffer buff)))))
+        (kill-buffer buff))
+
+      (run-hooks 'ap-init-hook))))
 
 ;; Returns current project directory
 (defun ap-get-project-dir()
