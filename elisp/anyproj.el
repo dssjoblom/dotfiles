@@ -74,7 +74,7 @@
 
       (setq-default ffip-project-root project-dir) ; use ffip
       (setq-default ap-current-project p)
-      (setq-default ffip-prune-patterns (append prune-files (eval (car (get 'ffip-prune-patterns 'standard-value)))))
+      (setq-default ffip-prune-patterns (append prune-files (cadr (get 'ffip-prune-patterns 'standard-value))))
       (setq-default ffip-patterns (mapcar #'(lambda (f) (concat "*" f)) file-types))
 
       (with-buffers-matching
