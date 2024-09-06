@@ -1,6 +1,6 @@
 ;;; .emacs --- by Daniel Sjöblom - placed in the public domain
 
-;; Time-stamp: <2024-09-06 21:48:14 daniel>
+;; Time-stamp: <2024-09-06 22:06:30 daniel>
 
 ;;; Commentary:
 
@@ -543,6 +543,13 @@
 
 ;; ruby-tools, some small utilites for ruby-mode
 (require 'ruby-tools nil t)
+
+(when (require 'railsy nil t)
+  (global-set-key (kbd "C-x v") 'find-rails-view)
+  (global-set-key (kbd "C-x m") 'find-rails-model)
+  (global-set-key (kbd "C-x c") 'find-rails-controller)
+  (global-set-key (kbd "C-x j") 'find-rails-script)
+  (global-set-key (kbd "C-x t") 'find-rails-spec))
 
 (setq-default js-indent-level 2)
 
