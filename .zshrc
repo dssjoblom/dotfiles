@@ -1,4 +1,4 @@
-# Time-stamp: <2023-02-18 13:30:51 daniel>
+# Time-stamp: <2024-09-06 19:56:28 daniel>
 #
 # Author: Daniel Sjöblom
 #
@@ -38,12 +38,12 @@ alias cd..='cd ..'
 alias less='less -P "%f lines %lt-%lb/%L %pm"'
 alias ungrep='grep -E -v'
 
-# For Ruby deving...
+# For Ruby/Rails development
 alias rbgrep="grep -n -s -R --include='*.rb' --exclude-dir=node_modules"
-alias erbgrep="grep -n -s -R --include='*.erb' --include='*.slim' --include='*.prawn'"
+alias erbgrep="grep -n -s -R --include='*.erb' --include='*.slim' --include='*.prawn' --include='*.jbuilder'"
 alias cssgrep="grep -n -s -R --include='*.scss' --include='*.sass'"
 alias jsgrep="ack --nocolor --noheading -s --type-set=coffee:ext:coffee --type-set=vue:ext:vue --type=js --type=vue --type=coffee --ignore-dir='public' --ignore-dir='docs' --ignore-dir=tmp --ignore-dir=vendor --ignore-dir=coverage"
-alias agrep="ack --nocolor --noheading --ignore-dir=tmp --ignore-dir=log --ignore-dir=coverage --ignore-file=ext:svg"
+alias agrep="ack --nocolor --noheading --ignore-dir=tmp --ignore-dir=log --ignore-dir=coverage --ignore-file=ext:svg --ignore-dir=.yarn"
 
 function i18ngrep() {
     grep -n -s -R --include='*.yml' $1 config/locales
@@ -53,10 +53,13 @@ function awsgrep() {
     grep -n -s -R $1 env aws
 }
 
+# bundle open will open in current emacs session
+export BUNDLER_EDITOR=emacsclient
+
 # Emacs keybindings
 bindkey -e
 
-# Setup history
+# Set up history
 HISTSIZE=2000
 SAVEHIST=2000
 HISTFILE=~/.zsh_history
@@ -66,7 +69,7 @@ setopt HIST_IGNORE_ALL_DUPS
 # Append to history instead of overwriting
 setopt APPEND_HISTORY
 
-# Setup dirstack
+# Set up dirstack
 
 # Push directories on cd
 setopt AUTO_PUSHD
@@ -102,9 +105,6 @@ function precmd() {
         RPROMPT="$(print "%{\e[1;31m%}$?%{\e[0m%}")";
     fi
 }
-
-# bundle open will open in current emacs session
-export BUNDLER_EDITOR=emacsclient
 
 # load additional configuration specific to this host (e.g. secret keys)
 if [[ -e ~/.machinerc ]]; then
