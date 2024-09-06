@@ -1,6 +1,6 @@
 ;;; .emacs --- by Daniel Sjöblom - placed in the public domain
 
-;; Time-stamp: <2024-09-06 21:34:15 daniel>
+;; Time-stamp: <2024-09-06 21:34:43 daniel>
 
 ;;; Commentary:
 
@@ -372,7 +372,7 @@
 ;;;;;;;;;;;;;;;;;;;
 
 ;; This turns on ido mode, which provides a more convenient way to
-;; select buffers and find files.  It replaces default keybindings
+;; select buffers and find files. It replaces default keybindings
 ;; with similar but more powerful functions. Need the ido package.
 
 (when (require 'ido nil t)
