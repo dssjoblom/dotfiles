@@ -1,6 +1,6 @@
 ;;; .emacs --- by Daniel Sjöblom - placed in the public domain
 
-;; Time-stamp: <2024-09-06 20:02:10 daniel>
+;; Time-stamp: <2024-09-06 21:12:58 daniel>
 
 ;;; Commentary:
 
@@ -65,6 +65,7 @@
 (use-package uniquify-files :ensure t)
 (use-package ido-completing-read+ :ensure t)
 (use-package ido-vertical-mode :ensure t)
+(use-package ivy :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; (Hopefully) portable stuff ;;;
@@ -371,7 +372,7 @@
 ;;;;;;;;;;;;;;;;;;;
 
 ;; This turns on ido mode, which provides a more convenient way to
-;; select buffers and find files. It replaces default keybindings
+;; select buffers and find files.  It replaces default keybindings
 ;; with similar but more powerful functions. Need the ido package.
 
 (when (require 'ido nil t)
@@ -389,6 +390,10 @@
   (when (require 'smex nil t) ;; IDO for M-x
     (smex-initialize)
     (global-set-key "\M-x" #'smex)))
+
+;; Ivy, partial completes. Not sure if this disables ido?
+(when (require 'ivy nil t)
+  (ivy-mode))
 
 ;; Load my personal lib. Available online at my homepage. There are
 ;; some other functions in the package that are not currently bound to
@@ -653,6 +658,9 @@
 (add-hook 'compilation-mode-hook
           #'(lambda () (setq truncate-lines 1)))
 
+;; Make sure compilation mode doesn't spam windows
+(setq split-width-threshold nil)
+
 ;; Reveal invisible/hidden text when moving over it. Useful in
 ;; conjunction with outline-mode
 
@@ -711,6 +719,7 @@
       (delete-window))
     (global-set-key "\C-cl" #'(lambda () (interactive) (switch-to-buffer "*Buffer List*")))))
 
+;; Local setup
 (require 'dsj-local nil t)
 
 ;; Workaround for terminal mode. The cursor and some other things
