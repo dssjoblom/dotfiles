@@ -53,10 +53,14 @@
                   "*/.cache/*"
                   "*/node_modules/*"))))
 
+(defgroup anyproj nil
+  "Project management"
+  :group 'convenience)
+
 (defcustom ap-init-hook nil
   "Hook run after switching to a project"
   :type 'hook
-  :group 'ap)
+  :group 'anyproj)
 
 (defun ap-switch-project(p)
   (interactive (list (completing-read "Choose project: " (mapcar 'car ap-projects))))
