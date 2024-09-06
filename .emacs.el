@@ -1,6 +1,6 @@
 ;;; .emacs --- by Daniel Sjöblom - placed in the public domain
 
-;; Time-stamp: <2024-09-06 21:12:58 daniel>
+;; Time-stamp: <2024-09-06 21:34:15 daniel>
 
 ;;; Commentary:
 
@@ -395,9 +395,8 @@
 (when (require 'ivy nil t)
   (ivy-mode))
 
-;; Load my personal lib. Available online at my homepage. There are
-;; some other functions in the package that are not currently bound to
-;; any key.
+;; Load my personal lib. There are some other functions in the package
+;; that are not currently bound to any key.
 
 (when (require 'dsj-util nil t)
   ;; Replace usual split binds
@@ -426,7 +425,7 @@
 (global-set-key [f8] #'man-follow) ; A very useful command, fetches
                                    ; man page for thing under point
 
-; Random coding utilities, also on website
+; Random coding utilities
 (require 'dsj-obscure-lang nil t)
 
 ;; Unset bg and exit keys. To avoid confusion, now show a message
