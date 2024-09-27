@@ -1,4 +1,4 @@
-# Time-stamp: <2024-09-06 19:56:28 daniel>
+# Time-stamp: <2024-09-27 18:07:58 daniel>
 #
 # Author: Daniel Sjöblom
 #
@@ -55,6 +55,12 @@ function awsgrep() {
 
 # bundle open will open in current emacs session
 export BUNDLER_EDITOR=emacsclient
+
+# Markdown viewer
+function viewmd() {
+    pandoc $1 > /tmp/$1.html
+    xdg-open /tmp/$1.html
+}
 
 # Emacs keybindings
 bindkey -e
