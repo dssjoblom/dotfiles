@@ -1,4 +1,4 @@
-# Time-stamp: <2024-09-27 18:07:58 daniel>
+# Time-stamp: <2024-10-01 11:10:09 daniel>
 #
 # Author: Daniel Sjöblom
 #
@@ -42,7 +42,7 @@ alias ungrep='grep -E -v'
 alias rbgrep="grep -n -s -R --include='*.rb' --exclude-dir=node_modules"
 alias erbgrep="grep -n -s -R --include='*.erb' --include='*.slim' --include='*.prawn' --include='*.jbuilder'"
 alias cssgrep="grep -n -s -R --include='*.scss' --include='*.sass'"
-alias jsgrep="ack --nocolor --noheading -s --type-set=coffee:ext:coffee --type-set=vue:ext:vue --type=js --type=vue --type=coffee --ignore-dir='public' --ignore-dir='docs' --ignore-dir=tmp --ignore-dir=vendor --ignore-dir=coverage"
+alias jsgrep="ack --nocolor --noheading -s --type-set=coffee:ext:coffee --type-set=vue:ext:vue --type=js --type=vue --type=coffee --ignore-dir='public' --ignore-dir='docs' --ignore-dir=tmp --ignore-dir=vendor --ignore-dir=coverage --ignore-dir=app/assets/builds"
 alias agrep="ack --nocolor --noheading --ignore-dir=tmp --ignore-dir=log --ignore-dir=coverage --ignore-file=ext:svg --ignore-dir=.yarn"
 
 function i18ngrep() {
