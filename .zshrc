@@ -1,4 +1,4 @@
-# Time-stamp: <2024-10-01 11:10:09 daniel>
+# Time-stamp: <2024-10-01 11:22:01 daniel>
 #
 # Author: Daniel Sjöblom
 #
@@ -58,8 +58,15 @@ export BUNDLER_EDITOR=emacsclient
 
 # Markdown viewer
 function viewmd() {
-    pandoc $1 > /tmp/$1.html
-    xdg-open /tmp/$1.html
+    if [ -z "$1" ]; then
+        echo "Error: No input file provided."
+        echo "Usage: viewmd <input_markdown_file>"
+        return 1
+    fi
+
+    file=$(mktemp -p /tmp viewmd.XXXXXXXX --suffix ".html")
+    pandoc $1 > $file
+    xdg-open $file
 }
 
 # Emacs keybindings
