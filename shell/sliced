@@ -84,7 +84,7 @@ function show_pipeline() {
 
 # Undo last command
 function undo() {
-    curr_file=$(( $curr_file - 1))
+    curr_file=$((curr_file - 1))
     if [ $curr_file -lt 0 ]; then
         curr_file=0
     else
@@ -95,7 +95,7 @@ function undo() {
 
 # Execute each line
 function exec_lines() {
-    while read line; do
+    while read -r line; do
         # TODO: error handling
         $line
     done < "${save_dir}/${curr_file}"
@@ -103,9 +103,7 @@ function exec_lines() {
 
 # Read command and apply
 function read_and_exec_cmd() {
-    read -p "> " -e cmd < /dev/tty
-
-    if [[ $? -ne 0 ]]; then
+    if ! read -p "> " -r -e cmd < /dev/tty; then
         exit 0
     fi
 
@@ -117,9 +115,9 @@ function read_and_exec_cmd() {
     if [[ -n $builtin_cmd ]]; then
         $builtin_cmd
     else
-        next_file=$(( $curr_file + 1 ))
+        next_file=$((curr_file + 1))
         # TODO: error handling
-        cat "${save_dir}/${curr_file}" | $cmd | tee "${save_dir}/${next_file}"
+        $cmd < "${save_dir}/${curr_file}" | tee "${save_dir}/${next_file}"
         curr_file=$next_file
         pipeline+=("$cmd")
     fi
