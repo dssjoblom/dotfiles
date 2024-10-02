@@ -1,4 +1,4 @@
-# Time-stamp: <2024-10-01 11:22:01 daniel>
+# Time-stamp: <2024-10-02 21:40:21 daniel>
 #
 # Author: Daniel Sjöblom
 #
@@ -46,11 +46,11 @@ alias jsgrep="ack --nocolor --noheading -s --type-set=coffee:ext:coffee --type-s
 alias agrep="ack --nocolor --noheading --ignore-dir=tmp --ignore-dir=log --ignore-dir=coverage --ignore-file=ext:svg --ignore-dir=.yarn"
 
 function i18ngrep() {
-    grep -n -s -R --include='*.yml' $1 config/locales
+    grep -n -s -R --include='*.yml' "$1" config/locales
 }
 
 function awsgrep() {
-    grep -n -s -R $1 env aws
+    grep -n -s -R "$1" env aws
 }
 
 # bundle open will open in current emacs session
@@ -65,8 +65,8 @@ function viewmd() {
     fi
 
     file=$(mktemp -p /tmp viewmd.XXXXXXXX --suffix ".html")
-    pandoc $1 > $file
-    xdg-open $file
+    pandoc "$1" > "$file"
+    xdg-open "$file"
 }
 
 # Emacs keybindings
