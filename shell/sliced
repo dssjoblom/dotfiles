@@ -1,0 +1,143 @@
+#!/bin/bash
+
+# sliced is an experimental interactive editor for text provided via a
+# pipe/redirection. The idea is to iteratively build a pipeline of any
+# commands. It can be used to e.g. recursively drill down the input
+# lines with successive greps. Supports undo.
+
+# Warning: not really ready for public use, but functional enough for
+# private hacking.
+
+# Make sure only we can read created files
+umask 077
+
+# Save temporary files in this directory
+save_dir=$(mktemp -d -p /tmp/ sliced-XXXXXXXX)
+
+# Current file
+curr_file=0
+# Current pipeline
+pipeline=()
+
+# "Builtin" keymap
+declare -A key_map
+key_map[e]="open_editor"
+key_map[h]="show_help"
+key_map[p]="show_lines"
+key_map[q]="quit"
+key_map[s]="show_pipeline"
+key_map[x]="exec_lines"
+key_map[z]="undo"
+
+# History management
+HISTFILE="${save_dir}/.history"
+HISTSIZE=1000
+shopt -s histappend
+
+# Cleanup on exit
+function cleanup() {
+    rm -rf "${save_dir}"
+}
+trap cleanup EXIT
+
+# Quit (bound to key)
+function quit() {
+    exit 0;
+}
+
+# Help (bound to key)
+function show_help() {
+    for key in "${!key_map[@]}"; do
+        echo "$key: ${key_map[$key]}"
+    done
+}
+
+# Open current file in $EDITOR
+function open_editor() {
+    if [ -z "$EDITOR" ]; then
+        echo "EDITOR is not set. Please set it to your preferred editor."
+    else
+        # TODO: doesn't work with some (most?) editors, e.g. nano.
+        # This is primarily just for emacs-client.
+        $EDITOR "${save_dir}/${curr_file}"
+    fi
+}
+
+# Save lines into curr_file
+function save_lines() {
+    cat > "${save_dir}/${curr_file}"
+}
+
+# Display lines
+function show_lines() {
+    cat "${save_dir}/${curr_file}"
+}
+
+# Display pipeline
+function show_pipeline() {
+    result=""
+    for cmd in "${pipeline[@]}"; do
+        result+=" | $cmd"
+    done
+    echo "$result"
+}
+
+# Undo last command
+function undo() {
+    curr_file=$(( $curr_file - 1))
+    if [ $curr_file -lt 0 ]; then
+        curr_file=0
+    else
+        unset "pipeline[$curr_file]"
+    fi
+    show_lines
+}
+
+# Execute each line
+function exec_lines() {
+    while read line; do
+        # TODO: error handling
+        $line
+    done < "${save_dir}/${curr_file}"
+}
+
+# Read command and apply
+function read_and_exec_cmd() {
+    read -p "> " -e cmd < /dev/tty
+
+    if [[ $? -ne 0 ]]; then
+        exit 0
+    fi
+
+    # Save in history
+    history -s "$cmd"
+    history -w "$HISTFILE"
+
+    builtin_cmd=${key_map[$cmd]}
+    if [[ -n $builtin_cmd ]]; then
+        $builtin_cmd
+    else
+        next_file=$(( $curr_file + 1 ))
+        # TODO: error handling
+        cat "${save_dir}/${curr_file}" | $cmd | tee "${save_dir}/${next_file}"
+        curr_file=$next_file
+        pipeline+=("$cmd")
+    fi
+}
+
+if [ -t 0 ]; then
+    echo "No input detected"
+    echo "Hint: try piping to sliced"
+    exit 0
+fi
+
+# Save initial input
+save_lines
+
+# Show initial input
+show_lines
+
+# Read new commands until quit
+while true; do
+    read_and_exec_cmd
+done
